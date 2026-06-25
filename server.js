@@ -1,5 +1,6 @@
 const express = require("express");
-const mysql = require("mysql2");
+require("dotenv").config();
+const db = require("./db");
 const cors = require("cors");
 
 const app = express();

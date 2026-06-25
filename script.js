@@ -13,8 +13,14 @@ window.addEventListener("load", () => {
   let saved = localStorage.getItem("user");
 
   if (saved) {
-    user = JSON.parse(saved);
-    showApp();
+    let tempUser = JSON.parse(saved);
+
+    if (tempUser && tempUser.id) {
+      user = tempUser;
+      showApp();
+    } else {
+      localStorage.removeItem("user");
+    }
   }
 
 });
@@ -26,36 +32,33 @@ const API = "http://localhost:5000";
 // LOGIN
 async function login() {
   let username = document.getElementById("username").value;
+  let password = document.getElementById("password").value;
 
-  if (!username) {
-    alert("Enter username");
+  if (!username || !password) {
+    alert("Enter username & password");
     return;
   }
 
-  try {
-    let res = await fetch(API + "/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ username })
-    });
+  let res = await fetch(API + "/login", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ username, password })
+  });
 
-    user = await res.json();
+  let data = await res.json();
 
-    localStorage.setItem("user", JSON.stringify(user));
+  console.log("LOGIN RESPONSE:", data);
 
-    showApp();
-
-  } catch (err) {
-    console.log(err);
-    alert("Login failed");
+  // 🔥 STRICT CHECK
+  if (!data || !data.id) {
+    alert("Wrong username or password");
+    return;
   }
-  console.log("USER =", user);
+
+  user = data;
+  localStorage.setItem("user", JSON.stringify(user));
+  showApp();
 }
-
-
-
 // SHOW APP PAGE
 function showApp() {
   console.log("USER DATA =", user);
@@ -122,8 +125,11 @@ async function addExpense() {
     console.log(err);
     alert("Save failed");
   }
-}
 
+document.getElementById("desc").value = "";
+document.getElementById("amount").value = "";
+document.getElementById("type").value = "income";
+}
 
 // VIEW EXPENSES
 async function loadExpenses() {
@@ -438,3 +444,18 @@ async function deleteExpense(id) {
 
 }
 
+function logout() {
+  localStorage.removeItem("user");
+  user = null;
+
+  document.getElementById("loginPage").style.display = "block";
+  document.getElementById("appPage").style.display = "none";
+
+  document.getElementById("list").innerHTML = "";
+  document.getElementById("summary").innerHTML = "";
+  document.getElementById("status").innerText = "";
+
+  // clear inputs also
+  document.getElementById("username").value = "";
+  document.getElementById("password").value = "";
+}

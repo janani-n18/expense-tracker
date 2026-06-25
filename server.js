@@ -1,6 +1,5 @@
 const express = require("express");
-require("dotenv").config();
-const db = require("./db");
+const mysql = require("mysql2");
 const cors = require("cors");
 
 const app = express();
@@ -13,7 +12,7 @@ app.use(express.json());
 const db = mysql.createConnection({
   host: "localhost",
   user: "root",
-  password: process.env.DB_PASSWORD,
+  password: "le@rn.sql",
   database: "expense_tracker"
 });
 
@@ -23,79 +22,6 @@ db.connect((err) => {
   } else {
     console.log("MySQL Connected");
   }
-});
-
-
-// ================= LOGIN =================
-app.post("/login", (req, res) => {
-  const { username } = req.body;
-
-  db.query(
-    "SELECT * FROM users WHERE username = ?",
-    [username],
-    (err, result) => {
-
-      if (err) {
-        return res.json({ error: err });
-      }
-
-      if (result.length > 0) {
-        return res.json(result[0]);
-      }
-
-      db.query(
-        "INSERT INTO users (username) VALUES (?)",
-        [username],
-        (err2, result2) => {
-
-          if (err2) {
-            return res.json({ error: err2 });
-          }
-
-          res.json({
-            id: result2.insertId,
-            username
-          });
-
-        }
-      );
-
-    }
-  );
-});
-
-
-// ================= ADD EXPENSE =================
-app.post("/expenses", (req, res) => {
-
-  const {
-    user_id,
-    description,
-    amount,
-    type,
-    transaction_date
-  } = req.body;
-
-  const sql =
-    "INSERT INTO transactions (user_id, description, amount, type,transaction_date) VALUES (?, ?, ?, ?, ?)";
-
-  db.query(
-    sql,
-    [Number(user_id), description, amount, type, transaction_date],
-    (err, result) => {
-
-      if (err) {
-        return res.json({ error: err });
-      }
-
-      res.json({
-        message: "Expense saved",
-        id: result.insertId
-      });
-
-    }
-  );
-
 });
 
 
@@ -122,6 +48,30 @@ app.get("/expenses/:userId", (req, res) => {
 
 });
 
+
+//=====post
+
+app.post("/login", (req, res) => {
+  const { username, password } = req.body;
+
+  db.query(
+    "SELECT * FROM users WHERE username = ? AND password = ?",
+    [username, password],
+    (err, result) => {
+      if (err) return res.json({ message: "Error" });
+
+      if (result.length === 0) {
+        return res.json({ message: "Invalid credentials" });
+      }
+
+      return res.json({
+        id: result[0].id,
+        username: result[0].username,
+        message: "Login success"
+      });
+    }
+  );
+});
 
 // ================= DELETE EXPENSE =================
 app.delete("/expenses/:id", (req, res) => {

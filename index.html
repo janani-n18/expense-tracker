@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0", charset="UTF-8">
+<title>Expense App</title>
+
+<style>
+body {
+  font-family: Arial;
+  margin: 0;
+  background: #f2f2f2;
+}
+
+.container {
+  max-width: 420px;
+  margin: auto;
+  background: white;
+  min-height: 100vh;
+  padding: 15px;
+}
+
+input, select, button {
+  width: 100%;
+  padding: 10px;
+  margin: 5px 0;
+}
+
+button {
+  background: green;
+  color: white;
+  border: none;
+}
+
+.logout {
+  background: red;
+}
+
+.card {
+  background: #eee;
+  padding: 10px;
+  margin: 5px 0;
+}
+.transaction{
+  margin-top:10px;
+}
+
+.row{
+  display:flex;
+  align-items:center;
+  width:100%;
+  border-bottom:1px solid #212121;
+  padding:8px 0;
+}
+
+.date{
+  width:80px;
+  font-size:12px;
+  text-align:left;
+}
+
+.desc{
+  flex:1;
+  padding:0 10px;
+  text-align:center;
+  word-break:break-word;
+}
+
+.income,
+.expense{
+  width:90px;
+  text-align:right;
+  font-weight:bold;
+}
+
+.income{
+  color:green;
+}
+
+.expense{
+  color:red;
+}
+
+.delete-btn{
+  width:25px;
+  text-align:right;
+  border:none;
+  background:none;
+  color:red;
+  font-size:13px;
+  font-weight:bold;
+  cursor:pointer;
+  padding:0;
+}
+
+hr{
+  border:none;
+  border-top:1px solid #1f1e1eeb;
+  margin-top:10px;
+}
+
+.summary-card{
+  background:#f5f5f5;
+  padding:12px;
+  border-radius:10px;
+  margin:10px 0;
+}
+
+.summary-card p{
+  margin:5px 0;
+}
+
+.delete-btn:hover{
+  opacity:0.8;
+}
+
+.month-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.download-btn{
+  width:35px;
+  height:35px;
+  border:none;
+  border-radius:50%;
+  background:#2196f3;
+  color:white;
+  cursor:pointer;
+  font-size:16px;
+}
+
+.download-btn:hover{
+  opacity:0.8;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<!-- LOGIN PAGE -->
+<div id="loginPage">
+  <h2>Login Page</h2>
+  <input id="username" placeholder="Enter Name">
+  <button onclick="login()">Login</button>
+</div>
+
+<!-- APP PAGE -->
+<div id="appPage" style="display:none;">
+
+  <h3 id="status"></h3>
+
+  <button class="logout" onclick="logout()">Logout</button>
+
+  <input id="desc" placeholder="Description">
+  <input type="date" id="date">
+  <input id="amount" type="number" placeholder="Amount">
+
+  <select id="type">
+    <option value="income">Income</option>
+    <option value="expense">Expense</option>
+  </select>
+
+  <button onclick="addExpense()">Add</button>
+  <button onclick="loadExpenses()">View</button>
+
+  <div id="summary"></div>
+
+  <input
+  type="text"
+  id="search"
+  placeholder="Search description..."
+  onkeyup="searchTransactions()">
+
+  <div id="list"></div>
+
+</div>
+
+</div>
+
+<!-- JS FILE LINK -->
+<script src="script.js"></script>
+
+</body>
+</html>
